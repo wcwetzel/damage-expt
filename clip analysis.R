@@ -1,6 +1,7 @@
 ## damage exp't 2010-2011
 library(bbmle)
 library(ggplot2)
+library(RColorBrewer)
 d = read.csv("~/Documents/DATA/2010 DATA/FIELD/CLIP/CLIP - 2010 - gall data.csv")
 
 d = d[!is.na(d$galls2010),]
@@ -68,20 +69,23 @@ points(1:2, by(d$galls2011, d$clip, mean), pch=2, col=2)
 
 
 p = ggplot(d, aes(x=d$galls2010, y=d$galls2011)) + 
-	geom_point(aes(colour = as.factor(d$clip)), alpha=0.7, position='jitter')
+	geom_point(aes(colour = as.factor(d$clip)), alpha=0.8, position='jitter') +
+	scale_color_hue('Damage') +
 # green is for clip, red is control
 # plot with lines for m1 (no damage effect) and m2 (same slope, different intercepts)
-p + #geom_abline(intercept = coef(m1)['a'], slope = coef(m1)['r']) +
-	geom_abline(intercept = coef(m2)['a'], slope = coef(m1)['r'], colour='red') +
+ #geom_abline(intercept = coef(m1)['a'], slope = coef(m1)['r']) +
+	geom_abline(intercept = coef(m2)['a'], slope = coef(m1)['r'], colour='tomato') +
 	geom_abline(intercept = coef(m2)['a'] + coef(m2)['b'], 
 		slope = coef(m1)['r'], colour='turquoise') +
 	scale_x_continuous('Galls in 2010') +
 	scale_y_continuous('Galls in 2011') +
+	#scale_colour_discrete(name = "Damage") +
 	theme_bw() +
 	opts( panel.grid.minor=theme_blank(), panel.grid.major=theme_blank(),
 	axis.title.x = theme_text(vjust = 0))
+p
 	# add CI for 0 and 1 damage
-
+ggsave('~/Documents/Analysis repos/damage-expt/figs/damage.pdf', p, width=4, height=3)
 # # plot with lines for m4 (different slopes and different intercepts)
 # p + #geom_abline(intercept = coef(m1)['a'], slope = coef(m1)['r']) +
 	# geom_abline(intercept = coef(m4)['a'], slope = coef(m4)['r'], colour='red') +
